@@ -32,16 +32,22 @@ class Edit {
   friend bool edit_comp(Edit x, Edit y);
 
 public:
-  Edit(edit_ops new_op = INSERT, int first_line = 0, int second_line = 0) {
+  Edit(edit_ops new_op = INSERT, int first_line = 0, int second_line = 0, std::string v = "") {
     op = new_op;
     line1 = first_line;
     line2 = second_line;
+    val = v;
   };
 
   void set_op(edit_ops new_op) { op = new_op; }
   void set_line1(int new_line) { line1 = new_line; }
   void set_line2(int new_line) { line2 = new_line; }
   void set_val(std::string v) { val = v; }
+
+  edit_ops get_op() { return op; }
+  int get_line1() { return line1; }
+  int get_line2() { return line2; }
+  std::string get_val() { return val; }
 
   friend std::ostream& operator<< (std::ostream& stream, const Edit &e) {
     if (e.op == INSERT) {
@@ -97,6 +103,23 @@ public:
   Edit get_last() { return this->edits.back(); }
 
   void commute(Patch p2) {}
+
+  Patch invert() {
+    std::vector<Edit> ret;
+
+    for (auto& e : edits) {
+
+      if (e.get_op() == INSERT) {
+        ret.push_back(Edit(DELETE, e.get_line1(), e.get_line2(), e.get_val()));
+      }
+      else {
+        ret.push_back(Edit(INSERT, e.get_line1(), e.get_line2(), e.get_val()));
+      }
+
+    }
+
+    return Patch(ret);
+  }
 
   bool is_empty() { return edits.size() == 0; }
 

@@ -20,9 +20,11 @@ int main(int argc, char *argv[]) {
   file1.close();
   file2.close();
 
-  Patch p = f1.diff(f2);
+  Patch p = f1 - f2;
 
   cout << p;
+  cout << "------" << endl;
+  cout << !p;
 
   return 0;
 }
